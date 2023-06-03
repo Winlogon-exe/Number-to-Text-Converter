@@ -1,2 +1,2 @@
-# Converter-Number-to-Words_RUB
+# Converter Number to Words-RUB
 конвертирует число в слова
