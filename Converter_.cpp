@@ -3,6 +3,11 @@
 #include <string> 
 using namespace std;
 std::string nameForNumber(long long number);
+std::string thousandEnding(int number);
+std::string millionEnding(int number);
+std::string billionEnding(int number);
+std::string rubleEnding(int number);
+
 
 /*пример самый наглядный будет:
 * Рассмотрим случай, когда number равно 21.Здесь number / 10 это 2, так что tens[number / 10] это "двадцать".
@@ -10,11 +15,6 @@ std::string nameForNumber(long long number);
 * Тогда конечная строка будет "двадцать один"
 * И так со всем числами
 */
-
-std::vector<std::string> ones = { "", " один", " два", " три", " четыре", " пять", " шесть", " семь", " восемь", " девять" };
-std::vector<std::string> teens = { " десять", " одиннадцать", " двенадцать", " тринадцать", " четырнадцать", " пятнадцать", " шестнадцать", " семнадцать", " восемнадцать", " девятнадцать" };
-std::vector<std::string> tens = { "", "", " двадцать", " тридцать", " сорок", " пятьдесят", " шестьдесят", " семьдесят", " восемьдесят", " девяносто" };
-std::vector<std::string> hundredth = { ""," сто", " двести", " триста", " четыреста", " пятьсот", " шестьсот", " семьсот", " восемьсот", " девятьсот", };
 
 std::string rubleEnding(int number) {
     int lastDigit = number % 10;
@@ -89,12 +89,16 @@ std::string billionEnding(int number) {
     }
 }
 // склонения  доделать - "одна"  и "две"
-//и функция rublending вызывается рекурсивно много раз из за чего и  получается что "рубль" повторяется много раз 
 std::string nameForNumber(long long number) {
-    std::string numberName;
+
+    static const std::vector<std::string> ones = { "", " один", " два", " три", " четыре", " пять", " шесть", " семь", " восемь", " девять" };
+    static const std::vector<std::string> teens = { " десять", " одиннадцать", " двенадцать", " тринадцать", " четырнадцать", " пятнадцать", " шестнадцать", " семнадцать", " восемнадцать", " девятнадцать" };
+    static const std::vector<std::string> tens = { "", "", " двадцать", " тридцать", " сорок", " пятьдесят", " шестьдесят", " семьдесят", " восемьдесят", " девяносто" };
+    static const std::vector<std::string> hundredth = { ""," сто", " двести", " триста", " четыреста", " пятьсот", " шестьсот", " семьсот", " восемьсот", " девятьсот", };
+
     //единицы
     if (number < 10 ) {
-        return ones[number]+ rubleEnding(number);
+        return ones[number];
     }
     //числительные
     else if (number < 20) {
@@ -132,7 +136,7 @@ int main()
     {
         cout << "Enter a positive integer: ";
         cin >> input;
-        cout << "\n" <<  nameForNumber(input) << endl;
+        cout << "\n" <<  nameForNumber(input) + rubleEnding(input) << endl;
         cout << "\n\n" << endl;
     } while (input > 0);
     return 0;
