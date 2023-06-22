@@ -1,9 +1,9 @@
 #include<iostream>
 #include <string> 
 #include<array>
-using namespace std;
 
-std::string nameForNumber(long long number, bool isThousand = false);
+struct Data;
+std::string nameForNumber(long long number, bool isThousand, Data& massive);
 std::string thousandEnding(int number);
 std::string millionEnding(int number);
 std::string billionEnding(int number);
@@ -27,7 +27,6 @@ std::string rubleEnding(int number) {
         return " рублей";
     }
 }
-
 std::string thousandEnding(int number) {
     int lastDigit = number % 10;
     int penultimateDigit = (number / 10) % 10;
@@ -45,7 +44,6 @@ std::string thousandEnding(int number) {
         return " тысяч";
     }
 }
-
 std::string millionEnding(int number) {
     int lastDigit = number % 10;
     int penultimateDigit = (number / 10) % 10;
@@ -63,7 +61,6 @@ std::string millionEnding(int number) {
         return " миллионов";
     }
 }
-
 std::string billionEnding(int number) {
     int lastDigit = number % 10;
     int penultimateDigit = (number / 10) % 10;
@@ -82,58 +79,81 @@ std::string billionEnding(int number) {
     }
 }
 
+
+struct Data {  
+     std::array<std::string, 10> ones; 
+     std::array<std::string, 10> onesThousand; 
+     std::array<std::string, 10> teens; 
+     std::array<std::string, 10> tens; 
+     std::array<std::string, 10> hundredth; 
+
+    Data() {
+        ones = { "", " один", " два", " три", " четыре", " пять", " шесть", " семь", " восемь", " девять" };
+        onesThousand = { "", " одна", " две", " три", " четыре", " пять", " шесть", " семь", " восемь", " девять" };
+        teens = { " десять", " одиннадцать", " двенадцать", " тринадцать", " четырнадцать", " пятнадцать", " шестнадцать", " семнадцать", " восемнадцать", " девятнадцать" };
+        tens = { "", "", " двадцать", " тридцать", "сорок", " пятьдесят", " шестьдесят", " семьдесят", " восемьдесят", " девяносто" }; 
+        hundredth = { "", " сто", " двести", " триста", " четыреста", " пятьсот", " шестьсот", " семьсот", " восемьсот", " девятьсот" }; 
+    }
+};
+
 //Склонение
-std::string nameForNumber(long long number, bool isThousand) {
+std::string nameForNumber(long long number, bool isThousand, Data& massive) {
 
-    static const std::array<string, 10> ones = { "", " один", " два", " три", " четыре", " пять", " шесть", " семь", " восемь", " девять" };
-    static const std::array<string, 10> onesThousand = { "", " одна", " две", " три", " четыре", " пять", " шесть", " семь", " восемь", " девять" };
-    static const std::array<string, 10> teens = { " десять", " одиннадцать", " двенадцать", " тринадцать", " четырнадцать", " пятнадцать", " шестнадцать", " семнадцать", " восемнадцать", " девятнадцать" };
-    static const std::array<string, 10> tens = { "", "", " двадцать", " тридцать", "сорок", " пятьдесят", " шестьдесят", " семьдесят", " восемьдесят", " девяносто" };
-    static const std::array<string, 10> hundredth = { ""," сто", " двести", " триста", " четыреста", " пятьсот", " шестьсот", " семьсот", " восемьсот", " девятьсот", };
+    std::array<std::string, 10>& ones = massive.ones; 
+    std::array<std::string, 10>& onesThousand = massive.onesThousand; 
+    std::array<std::string, 10>& teens = massive.teens;  
+    std::array<std::string, 10>& tens = massive.tens;  
+    std::array<std::string, 10>& hundredth = massive.hundredth; 
 
-    //единицы
-    if (number < 10) return isThousand ? onesThousand[number] : ones[number];
-    //числительные
-    else if (number < 20)  return teens[number - 10];
-    //десятки
-    else if (number < 100) return tens[number / 10] + nameForNumber(number % 10, isThousand);
-    //сотни
-    else if (number < 1000) return hundredth[number / 100] + nameForNumber(number % 100, isThousand);
-    //тысячи
-    else if (number < 1000000) return nameForNumber(number / 1000, true) + thousandEnding(number / 1000) + nameForNumber(number % 1000);
-    //миллионы
-    else if (number < 1000000000)  return nameForNumber(number / 1000000) + millionEnding(number / 1000000) + nameForNumber(number % 1000000);
-    //миллиарды 
-    else if (number < 1000000000000) return nameForNumber(number / 1000000000) + billionEnding(number / 1000000000) + nameForNumber(number % 1000000000);
+    // Используем указатель на первый элемент массива
+    std::array<std::string, 10>* currentArray = isThousand ? &onesThousand : &ones; 
+
+    // единицы
+    if (number < 10) return (*currentArray)[number];
+    // десятки
+    else if (number < 20)  return massive.teens[number - 10];
+    // десятки
+    else if (number < 100) return massive.tens[number / 10] + nameForNumber(number % 10, isThousand, massive);
+    // сотни
+    else if (number < 1000) return massive.hundredth[number / 100] + nameForNumber(number % 100, isThousand, massive);
+    // тысячи
+    else if (number < 1000000) return nameForNumber(number / 1000, isThousand, massive) + thousandEnding(number / 1000) + nameForNumber(number % 1000, isThousand, massive);
+    // миллионы
+    else if (number < 1000000000)  return nameForNumber(number / 1000000, isThousand, massive) + millionEnding(number / 1000000) + nameForNumber(number % 1000000, isThousand, massive);
+    // миллиарды
+    else if (number < 1000000000000) return nameForNumber(number / 1000000000, isThousand, massive) + billionEnding(number / 1000000000) + nameForNumber(number % 1000000000, isThousand, massive);
+
     return "error";
 }
+
 
 int main()
 {
     setlocale(LC_ALL, "RUS");
+    Data massive;
     long long input;
     do
     {
-        cout << "Enter a number: ";
-        cin >> input;
+        std::cout << "Enter a number: ";
+        std::cin >> input;
 
         // Проверяем ввод
-        if (cin.fail()) {
-            cin.clear(); // сбрасываем состояние потока
-            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // игнорируем "плохой" ввод
-            cout << "Please enter a valid number." << endl;
+        if (std::cin.fail()) {
+            std::cin.clear(); // сбрасываем состояние потока
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // игнорируем "плохой" ввод
+            std::cout << "Please enter a valid number." << std::endl;
             continue;
         }
 
         if (input < 0) {
-            cout << "минус";
+            std::cout << "минус";
             input = -input;
         }
         else if (input == 0)
         {
-            cout << "Ноль ";
+            std::cout << "Ноль ";
         }
-        cout << nameForNumber(input) + " " + rubleEnding(input % 1000) << "\n\n";
+        std::cout << nameForNumber(input, false, massive) + " " + rubleEnding(input % 1000) << "\n\n";
     } while (true);
     return 0;
 }
