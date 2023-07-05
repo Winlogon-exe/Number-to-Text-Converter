@@ -19,3 +19,7 @@ This program converts a given number into its textual representation in the Russ
 3. Run the compiled executable.
 4. Enter an integer when prompted.
 5. The program will convert the number into its textual representation in Russian and display the result.
+
+## Download
+
+You can download the latest release of the application from the [Releases](https://github.com/Winlogon-exe/Number-to-Text-Converter/releases) page.
