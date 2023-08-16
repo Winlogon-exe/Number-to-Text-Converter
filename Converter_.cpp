@@ -120,17 +120,23 @@ std::string nameForNumber(long long number, bool isThousand, Data& massive) {
     std::string handleError = "error";
     
     // единицы
-    if (number < Ten) return massive.ones[number];
+    if (number < Ten) 
+        return massive.ones[number];
     // десятки
-    else if (number < Twenty) return massive.teens[number - Ten];
+    else if (number < Twenty) 
+        return massive.teens[number - Ten];
     // десятки
-    else if (number < Hundred) return massive.tens[number / Ten] + nameForNumber(number % Ten, isThousand, massive);
+    else if (number < Hundred) 
+        return massive.tens[number / Ten] + nameForNumber(number % Ten, isThousand, massive);
     // сотни
-    else if (number < Thousand) return massive.hundredth[number / Hundred] + nameForNumber(number % Hundred, isThousand, massive);
+    else if (number < Thousand) 
+        return massive.hundredth[number / Hundred] + nameForNumber(number % Hundred, isThousand, massive);
     // тысячи
-    else if (number < Million) return nameForNumber(number / Thousand, isThousand, massive) + thousandEnding(number / Thousand) + nameForNumber(number % Thousand, isThousand, massive);
+    else if (number < Million) 
+        return nameForNumber(number / Thousand, isThousand, massive) + thousandEnding(number / Thousand) + nameForNumber(number % Thousand, isThousand, massive);
     // миллионы
-    else if (number < Billion) return nameForNumber(number / Million, isThousand, massive) + millionEnding(number / Million) + nameForNumber(number % Million, isThousand, massive);
+    else if (number < Billion) 
+        return nameForNumber(number / Million, isThousand, massive) + millionEnding(number / Million) + nameForNumber(number % Million, isThousand, massive);
 
     return handleError;
 }
