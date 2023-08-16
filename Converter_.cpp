@@ -1,6 +1,7 @@
 #include <string>
 #include<array>
 #include<iostream>
+#include <unordered_map>
 
 const long long Ten = 10;
 const long long Twenty = 20;
@@ -106,6 +107,8 @@ struct Data {
     std::array<std::string, 10> tens;
     std::array<std::string, 10> hundredth;
 
+    std::unordered_map<long long, std::string> cachedResults;
+
     Data() {
         ones = { "", " один", " два", " три", " четыре", " пять", " шесть", " семь", " восемь", " девять" };
         onesThousand = { "", " одна", " две", " три", " четыре", " пять", " шесть", " семь", " восемь", " девять" };
@@ -117,28 +120,30 @@ struct Data {
 
 //Склонение
 std::string nameForNumber(long long number, bool isThousand, Data& massive) {
-    std::string handleError = "error";
-    
-    // единицы
-    if (number < Ten) 
-        return massive.ones[number];
-    // десятки
-    else if (number < Twenty) 
-        return massive.teens[number - Ten];
-    // десятки
-    else if (number < Hundred) 
-        return massive.tens[number / Ten] + nameForNumber(number % Ten, isThousand, massive);
-    // сотни
-    else if (number < Thousand) 
-        return massive.hundredth[number / Hundred] + nameForNumber(number % Hundred, isThousand, massive);
-    // тысячи
-    else if (number < Million) 
-        return nameForNumber(number / Thousand, isThousand, massive) + thousandEnding(number / Thousand) + nameForNumber(number % Thousand, isThousand, massive);
-    // миллионы
-    else if (number < Billion) 
-        return nameForNumber(number / Million, isThousand, massive) + millionEnding(number / Million) + nameForNumber(number % Million, isThousand, massive);
+    if (massive.cachedResults.find(number) != massive.cachedResults.end()) {
+        return massive.cachedResults[number];
+    }
 
-    return handleError;
+    std::string handleError = "error";
+    std::string result;
+
+    if (number < Ten)
+        result = massive.ones[number];
+    else if (number < Twenty)
+        result = massive.teens[number - Ten];
+    else if (number < Hundred)
+        result = massive.tens[number / Ten] + nameForNumber(number % Ten, isThousand, massive);
+    else if (number < Thousand)
+        result = massive.hundredth[number / Hundred] + nameForNumber(number % Hundred, isThousand, massive);
+    else if (number < Million)
+        result = nameForNumber(number / Thousand, isThousand, massive) + thousandEnding(number / Thousand) + nameForNumber(number % Thousand, isThousand, massive);
+    else if (number < Billion)
+        result = nameForNumber(number / Million, isThousand, massive) + millionEnding(number / Million) + nameForNumber(number % Million, isThousand, massive);
+    else
+        result = handleError;
+
+    massive.cachedResults[number] = result; // Cache the result before returning
+    return result;
 }
 
 int main()
