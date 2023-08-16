@@ -1,111 +1,138 @@
-#include"Converter.h"
+#include <string>
+#include<array>
+#include<iostream>
+
+const long long Ten = 10;
+const long long Twenty = 20;
+const long long Hundred = 100;
+const long long Thousand = 1000;
+const long long Million = 1000000;
+const long long Billion = 1000000000;
 
 //Окончание
 std::string rubleEnding(const int number) {
     int lastDigit = number % 10;
     int penultimateDigit = (number / 10) % 10;
 
-    if (penultimateDigit == 1) {  // Для чисел 10-19 всегда "рублей"
-        return " рублей";
+    const std::string Rubles = " рублей";
+    const std::string Ruble = " рубль";
+    const std::string Rublia = " рубля";
+
+    if (penultimateDigit == 1) {
+        return Rubles;
     }
-    else if (lastDigit == 1) {  // Для чисел, оканчивающихся на 1 (кроме 11), "рубль"
-        return " рубль";
+    else if (lastDigit == 1) {
+        return Ruble;
     }
-    else if (lastDigit >= 2 && lastDigit <= 4) {  // Для чисел, оканчивающихся на 2-4 (кроме 12-14), "рубля"
-        return " рубля";
+    else if (lastDigit >= 2 && lastDigit <= 4) {
+        return Rublia;
     }
-    else {  // Во всех остальных случаях "рублей"
-        return " рублей";
+    else {
+        return Rubles;
     }
 }
+
 std::string thousandEnding(const int number) {
     int lastDigit = number % 10;
     int penultimateDigit = (number / 10) % 10;
 
-    if (penultimateDigit == 1) {  // Для чисел 10-19 всегда "тысяч"
-        return " тысяч";
+    const std::string Thousands = " тысяч";
+    const std::string Thousand = " тысяча";
+    const std::string Tysiachi = " тысячи";
+
+    if (penultimateDigit == 1) {
+        return Thousands;
     }
-    else if (lastDigit == 1) {  // Для чисел, оканчивающихся на 1 (кроме 11), "тысяча"
-        return " тысяча";
+    else if (lastDigit == 1) {
+        return Thousand;
     }
-    else if (lastDigit >= 2 && lastDigit <= 4) {  // Для чисел, оканчивающихся на 2-4 (кроме 12-14), "тысячи"
-        return " тысячи";
+    else if (lastDigit >= 2 && lastDigit <= 4) {
+        return Tysiachi;
     }
-    else {  // Во всех остальных случаях "тысяч"
-        return " тысяч";
+    else {
+        return Thousands;
     }
 }
+
 std::string millionEnding(const int number) {
     int lastDigit = number % 10;
     int penultimateDigit = (number / 10) % 10;
 
+    const std::string Millions = " миллионов";
+    const std::string Million = " миллион";
+    const std::string Milliona = " миллиона";
+
     if (penultimateDigit == 1) {
-        return " миллионов";
+        return Millions;
     }
     else if (lastDigit == 1) {
-        return " миллион";
+        return Million;
     }
     else if (lastDigit >= 2 && lastDigit <= 4) {
-        return " миллиона";
+        return Milliona;
     }
     else {
-        return " миллионов";
+        return Millions;
     }
 }
+
 std::string billionEnding(const int number) {
     int lastDigit = number % 10;
     int penultimateDigit = (number / 10) % 10;
 
+    const std::string Billions = " миллиардов";
+    const std::string Billion = " миллиард";
+    const std::string Billiona = " миллиарда";
+
     if (penultimateDigit == 1) {
-        return " миллиардов";
+        return Billions;
     }
     else if (lastDigit == 1) {
-        return " миллиард";
+        return Billion;
     }
     else if (lastDigit >= 2 && lastDigit <= 4) {
-        return " миллиарда";
+        return Billiona;
     }
     else {
-        return " миллиардов";
+        return Billions;
     }
 }
 
 //Data
-struct Data {  
-     std::array<std::string, 10> ones; 
-     std::array<std::string, 10> onesThousand; 
-     std::array<std::string, 10> teens; 
-     std::array<std::string, 10> tens; 
-     std::array<std::string, 10> hundredth; 
+struct Data {
+    std::array<std::string, 10> ones;
+    std::array<std::string, 10> onesThousand;
+    std::array<std::string, 10> teens;
+    std::array<std::string, 10> tens;
+    std::array<std::string, 10> hundredth;
 
     Data() {
         ones = { "", " один", " два", " три", " четыре", " пять", " шесть", " семь", " восемь", " девять" };
         onesThousand = { "", " одна", " две", " три", " четыре", " пять", " шесть", " семь", " восемь", " девять" };
         teens = { " десять", " одиннадцать", " двенадцать", " тринадцать", " четырнадцать", " пятнадцать", " шестнадцать", " семнадцать", " восемнадцать", " девятнадцать" };
-        tens = { "", "", " двадцать", " тридцать", " сорок", " пятьдесят", " шестьдесят", " семьдесят", " восемьдесят", " девяносто" }; 
-        hundredth = { "", " сто", " двести", " триста", " четыреста", " пятьсот", " шестьсот", " семьсот", " восемьсот", " девятьсот" }; 
+        tens = { "", "", " двадцать", " тридцать", " сорок", " пятьдесят", " шестьдесят", " семьдесят", " восемьдесят", " девяносто" };
+        hundredth = { "", " сто", " двести", " триста", " четыреста", " пятьсот", " шестьсот", " семьсот", " восемьсот", " девятьсот" };
     }
 };
 
 //Склонение
 std::string nameForNumber(long long number, bool isThousand, Data& massive) {
-
+    std::string handleError = "error";
+    
     // единицы
-    if (number < 10) return massive.ones[number];
+    if (number < Ten) return massive.ones[number];
     // десятки
-    else if (number < 20)  return massive.teens[number - 10];
+    else if (number < Twenty) return massive.teens[number - Ten];
     // десятки
-    else if (number < 100) return massive.tens[number / 10] + nameForNumber(number % 10, isThousand, massive);
+    else if (number < Hundred) return massive.tens[number / Ten] + nameForNumber(number % Ten, isThousand, massive);
     // сотни
-    else if (number < 1000) return massive.hundredth[number / 100] + nameForNumber(number % 100, isThousand, massive); 
+    else if (number < Thousand) return massive.hundredth[number / Hundred] + nameForNumber(number % Hundred, isThousand, massive);
     // тысячи
-    else if (number < 1000000) return nameForNumber(number / 1000, isThousand, massive) + thousandEnding(number / 1000) + nameForNumber(number % 1000, isThousand, massive); 
+    else if (number < Million) return nameForNumber(number / Thousand, isThousand, massive) + thousandEnding(number / Thousand) + nameForNumber(number % Thousand, isThousand, massive);
     // миллионы
-    else if (number < 1000000000)  return nameForNumber(number / 1000000, isThousand, massive) + millionEnding(number / 1000000) + nameForNumber(number % 1000000, isThousand, massive); 
-    // миллиарды
-    else if (number < 1000000000000) return nameForNumber(number / 1000000000, isThousand, massive) + billionEnding(number / 1000000000) + nameForNumber(number % 1000000000, isThousand, massive); 
+    else if (number < Billion) return nameForNumber(number / Million, isThousand, massive) + millionEnding(number / Million) + nameForNumber(number % Million, isThousand, massive);
 
-    return "error";
+    return handleError;
 }
 
 int main()
@@ -134,7 +161,7 @@ int main()
         {
             std::cout << "Ноль ";
         }
-        std::cout << nameForNumber(input, false, massive) + " " + rubleEnding(input % 1000) << "\n\n";
+        std::cout << nameForNumber(input, false, massive) + " " + rubleEnding(input % Thousand) << "\n\n";
     } while (true);
     return 0;
 }
