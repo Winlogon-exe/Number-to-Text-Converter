@@ -1,155 +1,116 @@
-#include <string>
-#include<array>
-#include<iostream>
+#include <iostream>
 #include <unordered_map>
+#include <limits>
+#include <string>
+#include <array>
+#include <vector>
 
-const long long Ten = 10;
-const long long Twenty = 20;
-const long long Hundred = 100;
-const long long Thousand = 1000;
-const long long Million = 1000000;
-const long long Billion = 1000000000;
-
-//Окончание
-std::string rubleEnding(const int number) {
-    int lastDigit = number % 10;
-    int penultimateDigit = (number / 10) % 10;
-
-    const std::string Rubles = " рублей";
-    const std::string Ruble = " рубль";
-    const std::string Rublia = " рубля";
-
-    if (penultimateDigit == 1) {
-        return Rubles;
-    }
-    else if (lastDigit == 1) {
-        return Ruble;
-    }
-    else if (lastDigit >= 2 && lastDigit <= 4) {
-        return Rublia;
-    }
-    else {
-        return Rubles;
-    }
-}
-
-std::string thousandEnding(const int number) {
-    int lastDigit = number % 10;
-    int penultimateDigit = (number / 10) % 10;
-
-    const std::string Thousands = " тысяч";
-    const std::string Thousand = " тысяча";
-    const std::string Tysiachi = " тысячи";
-
-    if (penultimateDigit == 1) {
-        return Thousands;
-    }
-    else if (lastDigit == 1) {
-        return Thousand;
-    }
-    else if (lastDigit >= 2 && lastDigit <= 4) {
-        return Tysiachi;
-    }
-    else {
-        return Thousands;
-    }
-}
-
-std::string millionEnding(const int number) {
-    int lastDigit = number % 10;
-    int penultimateDigit = (number / 10) % 10;
-
-    const std::string Millions = " миллионов";
-    const std::string Million = " миллион";
-    const std::string Milliona = " миллиона";
-
-    if (penultimateDigit == 1) {
-        return Millions;
-    }
-    else if (lastDigit == 1) {
-        return Million;
-    }
-    else if (lastDigit >= 2 && lastDigit <= 4) {
-        return Milliona;
-    }
-    else {
-        return Millions;
-    }
-}
-
-std::string billionEnding(const int number) {
-    int lastDigit = number % 10;
-    int penultimateDigit = (number / 10) % 10;
-
-    const std::string Billions = " миллиардов";
-    const std::string Billion = " миллиард";
-    const std::string Billiona = " миллиарда";
-
-    if (penultimateDigit == 1) {
-        return Billions;
-    }
-    else if (lastDigit == 1) {
-        return Billion;
-    }
-    else if (lastDigit >= 2 && lastDigit <= 4) {
-        return Billiona;
-    }
-    else {
-        return Billions;
-    }
-}
-
-//Data
-struct Data {
-    std::array<std::string, 10> ones;
-    std::array<std::string, 10> onesThousand;
-    std::array<std::string, 10> teens;
-    std::array<std::string, 10> tens;
-    std::array<std::string, 10> hundredth;
-
-    std::unordered_map<long long, std::string> cachedResults;
-
-    Data() {
-        ones = { "", " один", " два", " три", " четыре", " пять", " шесть", " семь", " восемь", " девять" };
-        onesThousand = { "", " одна", " две", " три", " четыре", " пять", " шесть", " семь", " восемь", " девять" };
-        teens = { " десять", " одиннадцать", " двенадцать", " тринадцать", " четырнадцать", " пятнадцать", " шестнадцать", " семнадцать", " восемнадцать", " девятнадцать" };
-        tens = { "", "", " двадцать", " тридцать", " сорок", " пятьдесят", " шестьдесят", " семьдесят", " восемьдесят", " девяносто" };
-        hundredth = { "", " сто", " двести", " триста", " четыреста", " пятьсот", " шестьсот", " семьсот", " восемьсот", " девятьсот" };
-    }
+ struct Constants {
+    static const long long Ten = 10;
+    static const long long Twenty = 20;
+    static const long long Hundred = 100;
+    static const long long Thousand = 1000;
+    static const long long Million = 1000000;
+    static const long long Billion = 1000000000;
 };
 
-//Склонение
-std::string nameForNumber(long long number, bool isThousand, Data& massive) {
-    if (massive.cachedResults.find(number) != massive.cachedResults.end()) {
-        return massive.cachedResults[number];
-    }
+struct Endings {
+    std::vector<std::string> rubleEndings = { " рублей", " рубль", " рубля" };
+    std::vector<std::string> thousandEndings = { " тысяч", " тысяча", " тысячи" };
+    std::vector<std::string> millionEndings = { " миллионов", " миллион", " миллиона" };
+    std::vector<std::string> billionEndings = { " миллиардов", " миллиард", " миллиарда" };
+};
 
+ struct Numbers {
+    const std::array<std::string, 10> ones = { "", " один", " два", " три", " четыре", " пять", " шесть", " семь", " восемь", " девять" };
+    const std::array<std::string, 10> onesThousand = { "", " одна", " две", " три", " четыре", " пять", " шесть", " семь", " восемь", " девять" };
+    const std::array<std::string, 10> teens = { " десять", " одиннадцать", " двенадцать", " тринадцать", " четырнадцать", " пятнадцать", " шестнадцать", " семнадцать", " восемнадцать", " девятнадцать" };
+    const std::array<std::string, 10> tens = { "", "", " двадцать", " тридцать", " сорок", " пятьдесят", " шестьдесят", " семьдесят", " восемьдесят", " девяносто" };
+    const std::array<std::string, 10> hundredth = { "", " сто", " двести", " триста", " четыреста", " пятьсот", " шестьсот", " семьсот", " восемьсот", " девятьсот" };
+};
+
+std::string chooseEnding(const int number, const std::vector<std::string>& endings) {
+    int lastDigit = number % 10;
+    int penultimateDigit = (number / 10) % 10;
+
+    if (penultimateDigit == 1) {
+        return endings[0];
+    }
+    else if (lastDigit == 1) {
+        return endings[1];
+    }
+    else if (lastDigit >= 2 && lastDigit <= 4) {
+        return endings[2];
+    }
+    else {
+        return endings[0];
+    }
+}
+
+std::string convertNumberToWords(long long number, Numbers& numbers, Endings& endings)
+{
     std::string handleError = "error";
     std::string result;
 
-    if (number < Ten)
-        result = massive.ones[number];
-    else if (number < Twenty)
-        result = massive.teens[number - Ten];
-    else if (number < Hundred)
-        result = massive.tens[number / Ten] + nameForNumber(number % Ten, isThousand, massive);
-    else if (number < Thousand)
-        result = massive.hundredth[number / Hundred] + nameForNumber(number % Hundred, isThousand, massive);
-    else if (number < Million)
-        result = nameForNumber(number / Thousand, isThousand, massive) + thousandEnding(number / Thousand) + nameForNumber(number % Thousand, isThousand, massive);
-    else if (number < Billion)
-        result = nameForNumber(number / Million, isThousand, massive) + millionEnding(number / Million) + nameForNumber(number % Million, isThousand, massive);
-    else
-        result = handleError;
+    while (number >= Constants::Billion)
+    {
+        if (number >= Constants::Billion)
+        {
+            result += convertNumberToWords(number / Constants::Billion, numbers, endings) + chooseEnding(number / Constants::Billion, endings.billionEndings);
+            number %= Constants::Billion;
+        }
+    }
 
-    massive.cachedResults[number] = result; // Cache the result before returning
-    return result;
+    while (number >= Constants::Million)
+    {
+        if (number >= Constants::Million)
+        {
+            result += convertNumberToWords(number / Constants::Million, numbers, endings) + chooseEnding(number / Constants::Million, endings.millionEndings);
+            number %= Constants::Million;
+        }
+    }
+
+    while (number >= Constants::Thousand)
+    {
+        if (number >= Constants::Thousand)
+        {
+            if (number / Constants::Thousand == 1 || number / Constants::Thousand == 2)
+                result += numbers.onesThousand[number / Constants::Thousand] + chooseEnding(number / Constants::Thousand, endings.thousandEndings);
+            else
+                result += convertNumberToWords(number / Constants::Thousand, numbers, endings) + chooseEnding(number / Constants::Thousand, endings.thousandEndings);
+            number %= Constants::Thousand;
+        }
+    }
+
+    if (number >= Constants::Hundred)
+    {
+        result += numbers.hundredth[number / Constants::Hundred];
+        number %= Constants::Hundred;
+    }
+
+    if (number >= Constants::Twenty)
+    {
+        result += numbers.tens[number / Constants::Ten];
+        number %= Constants::Ten;
+    }
+
+    if (number >= Constants::Ten)
+    {
+        result += numbers.teens[number - Constants::Ten];
+    }
+    else if (number > 0)
+    {
+        result += numbers.ones[number];
+    }
+
+    return result.empty() ? handleError : result;
 }
 
 int main()
 {
     setlocale(LC_ALL, "RUS");
-    Data massive;
+    Endings endings; 
+    Numbers numbers; 
     long long input;
     do
     {
@@ -172,7 +133,7 @@ int main()
         {
             std::cout << "Ноль ";
         }
-        std::cout << nameForNumber(input, false, massive) + " " + rubleEnding(input % Thousand) << "\n\n";
+        std::cout << convertNumberToWords(input,numbers, endings) + " " + chooseEnding(input % Constants::Thousand, endings.rubleEndings) << "\n\n";
     } while (true);
     return 0;
 }
