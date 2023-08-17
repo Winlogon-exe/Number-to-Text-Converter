@@ -107,7 +107,7 @@ long long getPositiveNumberInput() {
         if (std::cin.fail()) {
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cout << "Пожалуйста, введите корректное число." << std::endl;
+            std::cout << "Введите корректное число." << std::endl;
             continue;
         }
 
