@@ -4,8 +4,9 @@
 #include <string>
 #include <array>
 #include <vector>
+#include <functional>
 
- struct Constants {
+struct Constants {
     static const long long Ten = 10;
     static const long long Twenty = 20;
     static const long long Hundred = 100;
@@ -15,18 +16,18 @@
 };
 
 struct Endings {
-    std::vector<std::string> rubleEndings = { " рублей", " рубль", " рубля" };
-    std::vector<std::string> thousandEndings = { " тысяч", " тысяча", " тысячи" };
-    std::vector<std::string> millionEndings = { " миллионов", " миллион", " миллиона" };
-    std::vector<std::string> billionEndings = { " миллиардов", " миллиард", " миллиарда" };
+    const std::vector<std::string> rubleEndings = { " рублей", " рубль", " рубля" };
+    const std::vector<std::string> thousandEndings = { " тысяч", " тысяча", " тысячи" };
+    const std::vector<std::string> millionEndings = { " миллионов", " миллион", " миллиона" };
+    const std::vector<std::string> billionEndings = { " миллиардов", " миллиард", " миллиарда" };
 };
 
- struct Numbers {
-    const std::array<std::string, 10> ones = { "", " один", " два", " три", " четыре", " пять", " шесть", " семь", " восемь", " девять" };
-    const std::array<std::string, 10> onesThousand = { "", " одна", " две", " три", " четыре", " пять", " шесть", " семь", " восемь", " девять" };
+struct Numbers {
+    const std::array<std::string, 10> units = { "", " один", " два", " три", " четыре", " пять", " шесть", " семь", " восемь", " девять" };
+    const std::array<std::string, 10> unitsThousand = { "", " одна", " две", " три", " четыре", " пять", " шесть", " семь", " восемь", " девять" };
     const std::array<std::string, 10> teens = { " десять", " одиннадцать", " двенадцать", " тринадцать", " четырнадцать", " пятнадцать", " шестнадцать", " семнадцать", " восемнадцать", " девятнадцать" };
     const std::array<std::string, 10> tens = { "", "", " двадцать", " тридцать", " сорок", " пятьдесят", " шестьдесят", " семьдесят", " восемьдесят", " девяносто" };
-    const std::array<std::string, 10> hundredth = { "", " сто", " двести", " триста", " четыреста", " пятьсот", " шестьсот", " семьсот", " восемьсот", " девятьсот" };
+    const std::array<std::string, 10> hundreds = { "", " сто", " двести", " триста", " четыреста", " пятьсот", " шестьсот", " семьсот", " восемьсот", " девятьсот" };
 };
 
 std::string chooseEnding(const int number, const std::vector<std::string>& endings) {
@@ -52,39 +53,29 @@ std::string convertNumberToWords(long long number, Numbers& numbers, Endings& en
     std::string handleError = "error";
     std::string result;
 
-    while (number >= Constants::Billion)
-    {
-        if (number >= Constants::Billion)
-        {
-            result += convertNumberToWords(number / Constants::Billion, numbers, endings) + chooseEnding(number / Constants::Billion, endings.billionEndings);
-            number %= Constants::Billion;
-        }
-    }
+    const std::vector<std::pair<long long, std::vector<std::string>>> divisions = {
+     { Constants::Billion, endings.billionEndings },
+     { Constants::Million, endings.millionEndings },
+     { Constants::Thousand, endings.thousandEndings }
+    };
 
-    while (number >= Constants::Million)
+    for (const auto& division : divisions)
     {
-        if (number >= Constants::Million)
+        if (number >= division.first)
         {
-            result += convertNumberToWords(number / Constants::Million, numbers, endings) + chooseEnding(number / Constants::Million, endings.millionEndings);
-            number %= Constants::Million;
-        }
-    }
+            long long divisionResult = number / division.first; // Вычисляем результат деления заранее
 
-    while (number >= Constants::Thousand)
-    {
-        if (number >= Constants::Thousand)
-        {
-            if (number / Constants::Thousand == 1 || number / Constants::Thousand == 2)
-                result += numbers.onesThousand[number / Constants::Thousand] + chooseEnding(number / Constants::Thousand, endings.thousandEndings);
+            if (division.first == Constants::Thousand && (divisionResult == 1 || divisionResult == 2))
+                result += numbers.unitsThousand[divisionResult] + chooseEnding(divisionResult, division.second);
             else
-                result += convertNumberToWords(number / Constants::Thousand, numbers, endings) + chooseEnding(number / Constants::Thousand, endings.thousandEndings);
-            number %= Constants::Thousand;
+                result += convertNumberToWords(divisionResult, numbers, endings) + chooseEnding(divisionResult, division.second);
+            number %= division.first;
         }
     }
 
     if (number >= Constants::Hundred)
     {
-        result += numbers.hundredth[number / Constants::Hundred];
+        result += numbers.hundreds[number / Constants::Hundred];
         number %= Constants::Hundred;
     }
 
@@ -100,40 +91,51 @@ std::string convertNumberToWords(long long number, Numbers& numbers, Endings& en
     }
     else if (number > 0)
     {
-        result += numbers.ones[number];
+        result += numbers.units[number];
     }
 
     return result.empty() ? handleError : result;
 }
 
-int main()
-{
-    setlocale(LC_ALL, "RUS");
-    Endings endings; 
-    Numbers numbers; 
+long long getPositiveNumberInput() {
     long long input;
     do
     {
-        std::cout << "Enter a number: ";
+        std::cout << "Введите число: ";
         std::cin >> input;
 
-        // Проверяем ввод
         if (std::cin.fail()) {
-            std::cin.clear(); // сбрасываем состояние потока
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // игнорируем "плохой" ввод
-            std::cout << "Please enter a valid number." << std::endl;
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Пожалуйста, введите корректное число." << std::endl;
             continue;
         }
 
         if (input < 0) {
-            std::cout << "минус";
+            std::cout << "минус ";
             input = -input;
         }
         else if (input == 0)
         {
             std::cout << "Ноль ";
         }
-        std::cout << convertNumberToWords(input,numbers, endings) + " " + chooseEnding(input % Constants::Thousand, endings.rubleEndings) << "\n\n";
+        return input;
     } while (true);
+}
+
+int main()
+{
+    setlocale(LC_ALL, "RUS");
+
+    Numbers numbers;
+    Endings endings;
+
+    while (true)
+    {
+        long long getInput = getPositiveNumberInput();
+        std::string result = convertNumberToWords(getInput, numbers, endings); 
+        std::cout << result << std::endl;
+    }
+
     return 0;
 }
