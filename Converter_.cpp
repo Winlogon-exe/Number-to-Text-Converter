@@ -47,6 +47,8 @@ std::string chooseEnding(long long number, const std::array<std::string, 3>& end
     }
 }
 
+//еще функцию что ли добавлять для rubleEndings??
+
 std::string convertNumberToWords(long long number, Numbers& numbers, Endings& endings)
 {
     std::string handleError = "error";
@@ -65,9 +67,9 @@ std::string convertNumberToWords(long long number, Numbers& numbers, Endings& en
             long long divisionResult = number / division.first; // Вычисляем результат деления заранее
 
             if (division.first == Constants::Thousand && (divisionResult == 1 || divisionResult == 2))
-                result += std::string(numbers.unitsThousand[divisionResult]) + std::string(chooseEnding(divisionResult, division.second));
+                result += numbers.unitsThousand[divisionResult] +chooseEnding(divisionResult, division.second);
             else
-                result += convertNumberToWords(divisionResult, numbers, endings) + std::string(chooseEnding(divisionResult, division.second));
+                result += convertNumberToWords(divisionResult, numbers, endings) + chooseEnding(divisionResult, division.second);
             number %= division.first;
         }
     }
@@ -92,8 +94,6 @@ std::string convertNumberToWords(long long number, Numbers& numbers, Endings& en
     {
         result += numbers.units[number];
     }
-
-    result += std::string(chooseEnding(number, endings.rubleEndings)); // Добавление "рублей"
 
     return result.empty() ? handleError : result;
 }
@@ -133,7 +133,8 @@ int main()
 
     while (true)
     {
-        std::string result = convertNumberToWords(getPositiveNumberInput(), numbers, endings);
+        long long number = getPositiveNumberInput();
+        std::string result = convertNumberToWords(number, numbers, endings)+ chooseEnding(number, endings.rubleEndings);
         std::cout << result << std::endl;
     }
 
