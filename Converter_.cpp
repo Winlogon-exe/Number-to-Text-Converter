@@ -5,13 +5,13 @@
 #include <vector>
 #include <functional>
 
-struct Constants {
-    static constexpr long long Ten = 10;
-    static constexpr long long Twenty = 20;
-    static constexpr long long Hundred = 100;
-    static constexpr long long Thousand = 1000;
-    static constexpr long long Million = 1000000;
-    static constexpr long long Billion = 1000000000;
+enum Constants : long long {
+    Ten = 10,
+    Twenty = 20,
+    Hundred = 100,
+    Thousand = 1000,
+    Million = 1000000,
+    Billion = 1000000000
 };
 
 struct Endings {
@@ -55,40 +55,40 @@ std::string convertNumberToWords(long long number, Numbers& numbers, Endings& en
     std::string result;
 
     const std::vector<std::pair<long long, std::array<std::string, 3>>> divisions = {
-     { Constants::Billion, endings.billionEndings },
-     { Constants::Million, endings.millionEndings },
-     { Constants::Thousand, endings.thousandEndings }
+     { Billion, endings.billionEndings },
+     { Million, endings.millionEndings },
+     { Thousand, endings.thousandEndings }
     };
 
     for (const auto& division : divisions)
     {
         if (number >= division.first)
         {
-            long long divisionResult = number / division.first; // Вычисляем результат деления заранее
+            const long long divisionResult = number / division.first; // Вычисляем результат деления заранее
 
-            if (division.first == Constants::Thousand && (divisionResult == 1 || divisionResult == 2))
-                result += numbers.unitsThousand[divisionResult] +chooseEnding(divisionResult, division.second);
+            if (division.first == Thousand && (divisionResult == 1 || divisionResult == 2))
+                result += numbers.unitsThousand[divisionResult] + chooseEnding(divisionResult, division.second);
             else
                 result += convertNumberToWords(divisionResult, numbers, endings) + chooseEnding(divisionResult, division.second);
             number %= division.first;
         }
     }
 
-    if (number >= Constants::Hundred)
+    if (number >= Hundred) 
     {
-        result += numbers.hundreds[number / Constants::Hundred];
-        number %= Constants::Hundred;
+        result += numbers.hundreds[number / Hundred];
+        number %= Hundred;
     }
 
-    if (number >= Constants::Twenty)
+    if (number >= Twenty)
     {
-        result += numbers.tens[number / Constants::Ten];
-        number %= Constants::Ten;
+        result += numbers.tens[number / Ten];
+        number %= Ten;
     }
 
-    if (number >= Constants::Ten)
+    if (number >= Ten)
     {
-        result += numbers.teens[number - Constants::Ten];
+        result += numbers.teens[number - Ten];
     }
     else if (number > 0)
     {
@@ -133,8 +133,8 @@ int main()
 
     while (true)
     {
-        long long number = getPositiveNumberInput();
-        std::string result = convertNumberToWords(number, numbers, endings)+ chooseEnding(number, endings.rubleEndings);
+        long long getInput = getPositiveNumberInput();
+        std::string result = convertNumberToWords(getInput, numbers, endings) + chooseEnding(getInput, endings.rubleEndings);
         std::cout << result << std::endl;
     }
 
