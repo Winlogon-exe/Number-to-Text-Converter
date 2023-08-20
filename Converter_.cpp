@@ -47,37 +47,57 @@ std::string chooseEnding(long long number, const std::array<std::string, 3>& end
     }
 }
 
+std::string getCachedResult(long long number) {
+    std::unordered_map<long long, std::string> cache;
+    auto cacheIt = cache.find(number);
+    if (cacheIt != cache.end()) {
+        return cacheIt->second;
+    }
+    return "";
+}
+
 
 std::string convertNumberToWords(long long number, Numbers& numbers, Endings& endings)
 {
-    //кеширование?
-    using SA = std::array<std::string, 3>;  
+    // Определение разделений с соответствующими окончаниями
+    using SA = std::array<std::string, 3>;
     using P = std::pair<long long, SA>;
+
+    static std::unordered_map<long long, std::string> cache;
 
     std::string handleError = "error";
     std::string result;
 
+    // Проверяем, есть ли результат в кеше
+    auto cacheIt = cache.find(number);
+    if (cacheIt != cache.end()) {
+        return cacheIt->second; // Возвращаем результат из кеша
+    }
+
     const std::vector<P> divisions = {
-      { Billion, endings.billionEndings }, 
-      { Million, endings.millionEndings }, 
+      { Billion, endings.billionEndings },
+      { Million, endings.millionEndings },
       { Thousand, endings.thousandEndings }
     };
 
 
     for (const auto& division : divisions)
     {
+        // Проверяем, число для данного разделения
         if (number >= division.first)
         {
             const long long divisionResult = number / division.first; // Вычисляем результат деления заранее
 
+            // Добавляем результат деления в строку, учитывая окончания
             if (division.first == Thousand && (divisionResult == 1 || divisionResult == 2))
                 result += numbers.unitsThousand[divisionResult] + chooseEnding(divisionResult, division.second);
             else
                 result += convertNumberToWords(divisionResult, numbers, endings) + chooseEnding(divisionResult, division.second);
-            number %= division.first;
+
+            number %= division.first;// Обновляем остаток числа
         }
     }
-
+    // Обработка сотен, десятков и единиц
     if (number >= Hundred)
     {
         result += numbers.hundreds[number / Hundred];
@@ -98,7 +118,7 @@ std::string convertNumberToWords(long long number, Numbers& numbers, Endings& en
     {
         result += numbers.units[number];
     }
-
+    cache[number] = result;
     return result.empty() ? handleError : result;
 }
 
