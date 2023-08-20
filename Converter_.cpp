@@ -47,18 +47,22 @@ std::string chooseEnding(long long number, const std::array<std::string, 3>& end
     }
 }
 
-//еще функцию что ли добавлять для rubleEndings??
 
 std::string convertNumberToWords(long long number, Numbers& numbers, Endings& endings)
 {
+    //кеширование?
+    using SA = std::array<std::string, 3>;  
+    using P = std::pair<long long, SA>;
+
     std::string handleError = "error";
     std::string result;
 
-    const std::vector<std::pair<long long, std::array<std::string, 3>>> divisions = {
-     { Billion, endings.billionEndings },
-     { Million, endings.millionEndings },
-     { Thousand, endings.thousandEndings }
+    const std::vector<P> divisions = {
+      { Billion, endings.billionEndings }, 
+      { Million, endings.millionEndings }, 
+      { Thousand, endings.thousandEndings }
     };
+
 
     for (const auto& division : divisions)
     {
@@ -74,7 +78,7 @@ std::string convertNumberToWords(long long number, Numbers& numbers, Endings& en
         }
     }
 
-    if (number >= Hundred) 
+    if (number >= Hundred)
     {
         result += numbers.hundreds[number / Hundred];
         number %= Hundred;
@@ -98,10 +102,12 @@ std::string convertNumberToWords(long long number, Numbers& numbers, Endings& en
     return result.empty() ? handleError : result;
 }
 
-long long getPositiveNumberInput() {
-    long long input;
-    do
-    {
+template <typename T>
+T getNumberInput() {
+    T input{};
+    std::string negativePrefix = "минус";
+
+    while (true) {
         std::cout << "Введите число: ";
         std::cin >> input;
 
@@ -112,16 +118,15 @@ long long getPositiveNumberInput() {
             continue;
         }
 
-        if (input < 0) {
-            std::cout << "минус ";
+        if (input < static_cast<T>(0)) {
+            std::cout << negativePrefix;
             input = -input;
         }
-        else if (input == 0)
-        {
-            std::cout << "Ноль ";
+        else if (input == static_cast<T>(0)) {
+            std::cout << "Ноль";
         }
-        return input;
-    } while (true);
+        return input;  // Возвращаем только при корректном вводе
+    }
 }
 
 int main()
@@ -133,7 +138,7 @@ int main()
 
     while (true)
     {
-        long long getInput = getPositiveNumberInput();
+        long long getInput = getNumberInput<long long>();
         std::string result = convertNumberToWords(getInput, numbers, endings) + chooseEnding(getInput, endings.rubleEndings);
         std::cout << result << std::endl;
     }
