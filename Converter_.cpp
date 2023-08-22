@@ -29,6 +29,7 @@ struct Numbers {
     std::array<std::string, 10> hundreds = { "", " сто", " двести", " триста", " четыреста", " пятьсот", " шестьсот", " семьсот", " восемьсот", " девятьсот" };
 };
 
+//rubleEndings
 std::string chooseEnding(long long number, const std::array<std::string, 3>& endings) {
     long long lastDigit = number % 10;
     long long penultimateDigit = (number / 10) % 10;
@@ -47,27 +48,17 @@ std::string chooseEnding(long long number, const std::array<std::string, 3>& end
     }
 }
 
-std::string getCachedResult(long long number) {
-    std::unordered_map<long long, std::string> cache;
-    auto cacheIt = cache.find(number);
-    if (cacheIt != cache.end()) {
-        return cacheIt->second;
-    }
-    return "";
-}
-
 
 std::string convertNumberToWords(long long number, Numbers& numbers, Endings& endings)
 {
     // Определение разделений с соответствующими окончаниями
-    using SA = std::array<std::string, 3>;
-    using P = std::pair<long long, SA>;
+    using P = std::pair<long long, std::array<std::string, 3>>;
 
-    static std::unordered_map<long long, std::string> cache;
 
     std::string handleError = "error";
     std::string result;
 
+    static std::unordered_map<long long, std::string> cache;
     // Проверяем, есть ли результат в кеше
     auto cacheIt = cache.find(number);
     if (cacheIt != cache.end()) {
