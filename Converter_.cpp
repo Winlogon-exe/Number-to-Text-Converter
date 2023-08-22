@@ -48,12 +48,10 @@ std::string chooseEnding(long long number, const std::array<std::string, 3>& end
     }
 }
 
-
 std::string convertNumberToWords(long long number, Numbers& numbers, Endings& endings)
 {
     // Определение разделений с соответствующими окончаниями
     using P = std::pair<long long, std::array<std::string, 3>>;
-
 
     std::string handleError = "error";
     std::string result;
@@ -65,7 +63,7 @@ std::string convertNumberToWords(long long number, Numbers& numbers, Endings& en
         return cacheIt->second; // Возвращаем результат из кеша
     }
 
-    const std::vector<P> divisions = {
+    static const std::vector<P> divisions = { 
       { Billion, endings.billionEndings },
       { Million, endings.millionEndings },
       { Thousand, endings.thousandEndings }
@@ -113,12 +111,10 @@ std::string convertNumberToWords(long long number, Numbers& numbers, Endings& en
     return result.empty() ? handleError : result;
 }
 
-template <typename T>
-T getNumberInput() {
-    T input{};
-    std::string negativePrefix = "минус";
-
-    while (true) {
+long long getNumberInput() {
+    long long input;
+    do
+    {
         std::cout << "Введите число: ";
         std::cin >> input;
 
@@ -129,15 +125,16 @@ T getNumberInput() {
             continue;
         }
 
-        if (input < static_cast<T>(0)) {
-            std::cout << negativePrefix;
+        if (input < 0) {
+            std::cout << "минус ";
             input = -input;
         }
-        else if (input == static_cast<T>(0)) {
-            std::cout << "Ноль";
+        else if (input == 0)
+        {
+            std::cout << "Ноль ";
         }
-        return input;  // Возвращаем только при корректном вводе
-    }
+        return input;
+    } while (true);
 }
 
 int main()
@@ -149,7 +146,7 @@ int main()
 
     while (true)
     {
-        long long getInput = getNumberInput<long long>();
+        long long getInput = getNumberInput();
         std::string result = convertNumberToWords(getInput, numbers, endings) + chooseEnding(getInput, endings.rubleEndings);
         std::cout << result << std::endl;
     }
