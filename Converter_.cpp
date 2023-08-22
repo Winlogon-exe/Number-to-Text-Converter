@@ -29,8 +29,8 @@ struct Numbers {
     std::array<std::string, 10> hundreds = { "", " сто", " двести", " триста", " четыреста", " пятьсот", " шестьсот", " семьсот", " восемьсот", " девятьсот" };
 };
 
-//rubleEndings
-std::string chooseEnding(long long number, const std::array<std::string, 3>& endings) {
+//Обработка окончания 
+std::string GetEnding(long long number, const std::array<std::string, 3>& endings) {
     long long lastDigit = number % 10;
     long long penultimateDigit = (number / 10) % 10;
 
@@ -50,7 +50,6 @@ std::string chooseEnding(long long number, const std::array<std::string, 3>& end
 
 std::string convertNumberToWords(long long number, Numbers& numbers, Endings& endings)
 {
-    // Определение разделений с соответствующими окончаниями
     using P = std::pair<long long, std::array<std::string, 3>>;
 
     std::string handleError = "error";
@@ -62,13 +61,13 @@ std::string convertNumberToWords(long long number, Numbers& numbers, Endings& en
     if (cacheIt != cache.end()) {
         return cacheIt->second; // Возвращаем результат из кеша
     }
-
+    
+    // Определение разделений с соответствующими окончаниями
       const std::vector<P> divisions = { 
       { Billion, endings.billionEndings },
       { Million, endings.millionEndings },
       { Thousand, endings.thousandEndings }
     };
-
 
     for (const auto& division : divisions)
     {
@@ -79,9 +78,9 @@ std::string convertNumberToWords(long long number, Numbers& numbers, Endings& en
 
             // Добавляем результат деления в строку, учитывая окончания
             if (division.first == Thousand && (divisionResult == 1 || divisionResult == 2))
-                result += numbers.unitsThousand[divisionResult] + chooseEnding(divisionResult, division.second);
+                result += numbers.unitsThousand[divisionResult] + GetEnding(divisionResult, division.second);
             else
-                result += convertNumberToWords(divisionResult, numbers, endings) + chooseEnding(divisionResult, division.second);
+                result += convertNumberToWords(divisionResult, numbers, endings) + GetEnding(divisionResult, division.second);
 
             number %= division.first;// Обновляем остаток числа
         }
@@ -147,7 +146,7 @@ int main()
     while (true)
     {
         long long getInput = getNumberInput();
-        std::string result = convertNumberToWords(getInput, numbers, endings) + chooseEnding(getInput, endings.rubleEndings);
+        std::string result = convertNumberToWords(getInput, numbers, endings) + GetEnding(getInput, endings.rubleEndings);
         std::cout << result << std::endl;
     }
 
