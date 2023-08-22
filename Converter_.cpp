@@ -63,7 +63,7 @@ std::string convertNumberToWords(long long number, Numbers& numbers, Endings& en
         return cacheIt->second; // Возвращаем результат из кеша
     }
 
-    static const std::vector<P> divisions = { 
+      const std::vector<P> divisions = { 
       { Billion, endings.billionEndings },
       { Million, endings.millionEndings },
       { Thousand, endings.thousandEndings }
